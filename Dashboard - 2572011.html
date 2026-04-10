@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - 2572011</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            grid-template-rows: auto 1fr auto;
+            grid-template-areas:
+                "header header"
+                "sidebar main"
+                "footer footer";
+            min-height: 100vh;
+        }
+
+        .header {
+            grid-area: header;
+            background-color: #1e293b;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-logo {
+            font-weight: bold;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .header-search input {
+            padding: 6px 12px;
+            border-radius: 15px;
+            border: none;
+            font-size: 14px;
+            width: 350px;
+            outline: none;
+            background-color: #334155; 
+            color: white;
+        }
+
+        .header-user {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #334155;
+            padding: 16px 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 20px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li.active a {
+            background-color: #1e293b;
+            color: white;
+        }
+
+        .sidebar ul li.active a {
+            font-weight: bold;
+        }
+
+        .main {
+            grid-area: main;
+            background-color: #f0f2f5;
+            padding: 24px;
+        }
+
+        .main-title {
+            font-size: 19px;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 220px);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid transparent; 
+        }
+
+        .stat-card.blue { border-left-color: #4facfe; }
+        .stat-card.green { border-left-color: #43e97b; }
+        .stat-card.orange { border-left-color: #ffa600; }
+        .stat-card.red { border-left-color: #f5576c; }
+
+        .stat-icon {
+            font-size: 29px;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 19px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .lower-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+        }
+
+        .orders-section,
+        .quick-info {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .orders-section h3,
+        .quick-info h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .orders-table th {
+            color: #64748b;
+            font-weight: normal;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .orders-table td {
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .badge.delivered { background-color: #dcfce7; color: #16a34a; }
+        .badge.pending { background-color: #fef9c3; color: #ca8a04; }
+        .badge.shipped { background-color: #dbeafe; color: #2563eb; }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item b {
+            color: #1e293b;
+        }
+
+        .footer {
+            grid-area: footer;
+            background-color: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+
+        <header class="header">
+            <div class="header-logo">&#128202; AdminDash</div>
+            <div class="header-search">
+                <input type="text" placeholder="Search ...">
+            </div>
+            <div class="header-user">2572011 - Justin Gabriel Kristianto</div>
+        </header>
+
+        <aside class="sidebar">
+            <ul>
+                <li class="active"><a href="#">&#127968; Dashboard</a></li>
+                <li><a href="#">&#128101; Users</a></li>
+                <li><a href="#">&#9881; Products</a></li>
+                <li><a href="#">&#128203; Orders</a></li>
+                <li><a href="#">&#128202; Analytics</a></li>
+                <li><a href="#">&#9881; Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="main">
+            <h2 class="main-title">Overview</h2>
+
+            <div class="stat-grid">
+                <div class="stat-card blue">
+                    <div class="stat-icon">&#128101;</div>
+                    <div class="stat-info">
+                        <span class="stat-number">1,284</span>
+                        <span class="stat-label">Total Users</span>
+                    </div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon">&#128722;</div>
+                    <div class="stat-info">
+                        <span class="stat-number">342</span>
+                        <span class="stat-label">Products</span>
+                    </div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-icon">&#128203;</div>
+                    <div class="stat-info">
+                        <span class="stat-number">89</span>
+                        <span class="stat-label">Pending Orders</span>
+                    </div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-icon">&#128176;</div>
+                    <div class="stat-info">
+                        <span class="stat-number">Rp 24.5M</span>
+                        <span class="stat-label">Revenue</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lower-section">
+                <div class="orders-section">
+                    <h3>Recent Orders</h3>
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>ORDER ID</th>
+                                <th>CUSTOMER</th>
+                                <th>PRODUCT</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#00124</td>
+                                <td>Andi Wijaya</td>
+                                <td>Laptop Pro</td>
+                                <td><span class="badge delivered">Delivered</span></td>
+                            </tr>
+                            <tr>
+                                <td>#00125</td>
+                                <td>Siti Rahma</td>
+                                <td>Wireless Earbuds</td>
+                                <td><span class="badge pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>#00126</td>
+                                <td>Budi Santoso</td>
+                                <td>Gaming Mouse</td>
+                                <td><span class="badge shipped">Shipped</span></td>
+                            </tr>
+                            <tr>
+                                <td>#00127</td>
+                                <td>Dewi Lestari</td>
+                                <td>USB-C Hub</td>
+                                <td><span class="badge delivered">Delivered</span></td>
+                            </tr>
+                            <tr>
+                                <td>#00128</td>
+                                <td>Fajar Nugroho</td>
+                                <td>Monitor 4K</td>
+                                <td><span class="badge pending">Pending</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="quick-info">
+                    <h3>Quick Info</h3>
+                    <div class="info-item">
+                        <span>New Signups Today</span>
+                        <b>+12</b>
+                    </div>
+                    <div class="info-item">
+                        <span>Orders Today</span>
+                        <b>27</b>
+                    </div>
+                    <div class="info-item">
+                        <span>Revenue Today</span>
+                        <b>Rp 3.2M</b>
+                    </div>
+                    <div class="info-item">
+                        <span>Active Sessions</span>
+                        <b>148</b>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy 257011 - Justin Gabriel Kristianto | AdminDash v1.0</p>
+        </footer>
+
+    </div>
+</body>
+</html>
